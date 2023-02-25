@@ -47,7 +47,6 @@ public class PlayerController : MonoBehaviour
         
         if(mainCamera != null)//oyuncunun dikeyde baktığı yönü ayarlıyoruz
         {
-            mainCamera.rotation = Quaternion.Euler(mainCamera.rotation.eulerAngles + new Vector3(-MouseInput().y , 0f, 0f));
 
             if(mainCamera.eulerAngles.x > maxViewAngle && mainCamera.eulerAngles.x <180f)
             {
@@ -56,6 +55,10 @@ public class PlayerController : MonoBehaviour
             else if(mainCamera.eulerAngles.x > 180f && mainCamera.eulerAngles.x < 360f - maxViewAngle)
             {
                 mainCamera.rotation = Quaternion.Euler(360f- maxViewAngle , transform.eulerAngles.y, transform.eulerAngles.z);
+            }
+            else
+            {
+                mainCamera.rotation = Quaternion.Euler(mainCamera.rotation.eulerAngles + new Vector3(-MouseInput().y , 0f, 0f));
             }
         }
     }
