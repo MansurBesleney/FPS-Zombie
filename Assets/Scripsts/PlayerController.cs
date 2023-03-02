@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
     [Header("Player Control Settings")]
     [SerializeField] private float walkSpeed = 8f;
     [SerializeField] private float runSpeed = 12f;
+    [SerializeField] private float gravityModifier = 0.95f;
+    [SerializeField] private float jumpPower = 0.25f;
 
     [Header("Mouse Control Settings")]
     [SerializeField] private float mouseSensivity = 1f;
@@ -17,6 +19,9 @@ public class PlayerController : MonoBehaviour
     private float horizontalInput;
     private float verticalInput;
     private Transform mainCamera;
+
+    private Vector3 heightMovement;
+    private bool isJumping = false;
     
     void Awake()
     {
@@ -65,19 +70,39 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
+
+        if(isJumping)
+        {
+            heightMovement.y = jumpPower;
+            isJumping = false;
+        }
+
+        heightMovement.y -= gravityModifier * Time.deltaTime;
         Vector3 localVerticalVector = transform.forward * verticalInput;
         Vector3 localHorizontalVector = transform.right * horizontalInput;
         Vector3 movementVector = localHorizontalVector + localVerticalVector;
 
         movementVector.Normalize();
         movementVector *= currentSpeed * Time.deltaTime;
-        characterController.Move(movementVector);
+        characterController.Move(movementVector + heightMovement);
+
+        /*
+        if(characterController.isGrounded)
+        {
+            heightMovement.y = 0f;
+        }
+        */
     }
 
     private void KeyboardInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
+
+        if(Input.GetKeyDown(KeyCode.Space) && characterController.isGrounded)
+        {
+            isJumping = true;
+        }
 
         if(Input.GetKey(KeyCode.LeftShift)) 
         {
